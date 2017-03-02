@@ -1,7 +1,9 @@
 // ## twig.path.js
 //
 // This file handles path parsing
-module.exports = function (Twig) {
+const path = require('path');
+
+module.exports = function (Twig) { // eslint-disable-line func-names
     /**
      * Namespace for path handling.
      */
@@ -16,26 +18,27 @@ module.exports = function (Twig) {
      *
      * @return {string}          The canonical version of the path
      */
-  Twig.path.parsePath = function (template, file) {
-    var namespaces = null,
-      file = file || '';
+  Twig.path.parsePath = function parsePath(template, file) {
+    let namespaces = null;
+    let file_path = file || '';
 
     if (typeof template === 'object' && typeof template.options === 'object') {
       namespaces = template.options.namespaces;
     }
 
-    if (typeof namespaces === 'object' && (file.indexOf('::') > 0) || file.indexOf('@') >= 0) {
-      for (const k in namespaces) {
-        if (namespaces.hasOwnProperty(k)) {
-          file = file.replace(`${k}::`, namespaces[k]);
-          file = file.replace(`@${k}`, namespaces[k]);
-        }
-      }
+    const hasNamespace = file_path.indexOf('::') > 0 || file_path.indexOf('@') >= 0;
+    if (typeof namespaces === 'object' && hasNamespace) {
+      Object.keys(namespaces).forEach((k) => {
+        if (!Twig.isOwnProperty(namespaces, k)) return;
 
-      return file;
+        file_path = file_path.replace(`${k}::`, namespaces[k]);
+        file_path = file_path.replace(`@${k}`, namespaces[k]);
+      });
+
+      return file_path;
     }
 
-    return Twig.path.relativePath(template, file);
+    return Twig.path.relativePath(template, file_path);
   };
 
     /**
@@ -46,13 +49,14 @@ module.exports = function (Twig) {
      *
      * @return {string} The canonical version of the path.
      */
-  Twig.path.relativePath = function (template, file) {
-    var base,
-      base_path,
-      sep_chr = '/',
-      new_path = [],
-      file = file || '',
-      val;
+  Twig.path.relativePath = function relativePath(template, file) {
+    const new_path = [];
+
+    let base;
+    let base_path;
+    let sep_chr = '/';
+    let val;
+    let file_path = file || '';
 
     if (template.url) {
       if (typeof template.base !== 'undefined') {
@@ -61,14 +65,13 @@ module.exports = function (Twig) {
         base = template.url;
       }
     } else if (template.path) {
-            // Get the system-specific path separator
-      let path = require('path'),
-        sep = path.sep || sep_chr,
-        relative = new RegExp(`^\\.{1,2}${sep.replace('\\', '\\\\')}`);
-      file = file.replace(/\//g, sep);
+      // Get the system-specific path separator
+      const sep = path.sep || sep_chr;
+      const relative = new RegExp(`^\\.{1,2}${sep.replace('\\', '\\\\')}`);
+      file_path = file_path.replace(/\//g, sep);
 
-      if (template.base !== undefined && file.match(relative) == null) {
-        file = file.replace(template.base, '');
+      if (template.base !== undefined && file_path.match(relative) == null) {
+        file_path = file_path.replace(template.base, '');
         base = template.base + sep;
       } else {
         base = path.normalize(template.path);
@@ -87,13 +90,13 @@ module.exports = function (Twig) {
 
         // Remove file from url
     base_path.pop();
-    base_path = base_path.concat(file.split(sep_chr));
+    base_path = base_path.concat(file_path.split(sep_chr));
 
     while (base_path.length > 0) {
       val = base_path.shift();
-      if (val == '.') {
-                // Ignore
-      } else if (val == '..' && new_path.length > 0 && new_path[new_path.length - 1] != '..') {
+      if (val === '.') {
+        // Ignore
+      } else if (val === '..' && new_path.length > 0 && new_path[new_path.length - 1] !== '..') {
         new_path.pop();
       } else {
         new_path.push(val);

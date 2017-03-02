@@ -35,6 +35,9 @@
     "walk": "2.3.x"
   },
   "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-airbnb": "^2.2.3",
     "chai": "^3.5.0",
     "eslint": "^3.16.1",
     "eslint-config-airbnb-base": "^11.1.0",
@@ -45,7 +48,7 @@
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
     "tokenizer": "1.1.x",
-    "webpack": "^1.13.3"
+    "webpack": "^2.2.1"
   },
   "browser": {
     "fs": false

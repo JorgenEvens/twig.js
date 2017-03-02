@@ -110,8 +110,8 @@ module.exports = function (Twig) {
                 key;
               for (key in obj) {
                 if (obj.hasOwnProperty(key)) {
-                    size++;
-                  }
+                  size++;
+                }
               }
               return size;
             }(variable))}) {${EOL}`;

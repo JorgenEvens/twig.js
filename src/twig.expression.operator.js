@@ -1,36 +1,31 @@
 // ## twig.expression.operator.js
 //
 // This file handles operator lookups and parsing.
-module.exports = function (Twig) {
-    /**
-     * Operator associativity constants.
-     */
+module.exports = function (Twig) { // eslint-disable-line func-names
+  /**
+  * Operator associativity constants.
+  */
   Twig.expression.operator = {
     leftToRight: 'leftToRight',
     rightToLeft: 'rightToLeft',
   };
 
-  const containment = function (a, b) {
+  function containment(a, b) {
     if (b === undefined || b === null) {
       return null;
     } else if (b.indexOf !== undefined) {
-            // String
-      return a === b || a !== '' && b.indexOf(a) > -1;
+      // String
+      return a === b || (a !== '' && b.indexOf(a) > -1);
     }
-    let el;
-    for (el in b) {
-      if (b.hasOwnProperty(el) && b[el] === a) {
-        return true;
-      }
-    }
-    return false;
-  };
 
-    /**
-     * Get the precidence and associativity of an operator. These follow the order that C/C++ use.
-     * See http://en.wikipedia.org/wiki/Operators_in_C_and_C++ for the table of values.
-     */
-  Twig.expression.operator.lookup = function (operator, token) {
+    return Object.keys(b).some(p => Twig.isOwnProperty(b, p) && b[p] === a);
+  }
+
+  /**
+    * Get the precidence and associativity of an operator. These follow the order that C/C++ use.
+    * See http://en.wikipedia.org/wiki/Operators_in_C_and_C++ for the table of values.
+    */
+  Twig.expression.operator.lookup = function lookup(operator, token) {
     switch (operator) {
       case '..':
         token.precidence = 20;
@@ -124,11 +119,11 @@ module.exports = function (Twig) {
      *
      * Returns the updated stack.
      */
-  Twig.expression.operator.parse = function (operator, stack) {
+  Twig.expression.operator.parse = function parse(operator, stack) {
     Twig.log.trace('Twig.expression.operator.parse: ', 'Handling ', operator);
-    let a,
-      b,
-      c;
+    let a;
+    let b;
+    let c;
 
     if (operator === '?') {
       c = stack.pop();
@@ -243,7 +238,7 @@ module.exports = function (Twig) {
         break;
 
       case '==':
-        stack.push(a == b);
+        stack.push(a == b); // eslint-disable-line eqeqeq
         break;
 
       case '!==':
@@ -251,7 +246,7 @@ module.exports = function (Twig) {
         break;
 
       case '!=':
-        stack.push(a != b);
+        stack.push(a != b); // eslint-disable-line eqeqeq
         break;
 
       case 'or':
@@ -259,11 +254,11 @@ module.exports = function (Twig) {
         break;
 
       case 'b-or':
-        stack.push(a | b);
+        stack.push(a | b); // eslint-disable-line no-bitwise
         break;
 
       case 'b-xor':
-        stack.push(a ^ b);
+        stack.push(a ^ b); // eslint-disable-line no-bitwise
         break;
 
       case 'and':
@@ -271,11 +266,11 @@ module.exports = function (Twig) {
         break;
 
       case 'b-and':
-        stack.push(a & b);
+        stack.push(a & b); // eslint-disable-line no-bitwise
         break;
 
       case '**':
-        stack.push(Math.pow(a, b));
+        stack.push(a ** b);
         break;
 
       case 'not in':
@@ -291,7 +286,6 @@ module.exports = function (Twig) {
         break;
 
       default:
-        debugger;
         throw new Twig.Error(`Failed to parse operator: ${operator} is an unknown operator.`);
     }
   };

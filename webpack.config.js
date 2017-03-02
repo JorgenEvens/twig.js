@@ -15,10 +15,19 @@ module.exports = {
         library: 'Twig',
         libraryTarget: 'umd'
     },
+    resolve: {
+        extensions: [ '.js' ]
+    },
     module: {
-        preLoaders: [{
+        rules: [{
             test: /\.js$/,
-            loader: 'eslint'
+            enforce: 'pre',
+            loader: 'eslint-loader',
+            exclude: /node_modules/
+        }, {
+            test: /\.js$/,
+            loader: 'babel-loader',
+            exclude: /node_modules/
         }]
     },
     plugins: env === 'browser' ? [

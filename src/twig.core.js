@@ -56,6 +56,11 @@ module.exports = function (Twig) {
     return -1;
   };
 
+  Twig.isOwnProperty = function isOwnProperty(object, property) {
+    // see http://eslint.org/docs/rules/no-prototype-builtins
+    return Object.prototype.hasOwnProperty.call(object, property);
+  };
+
   Twig.forEach = function (arr, callback, thisArg) {
     if (Array.prototype.forEach) {
       return arr.forEach(callback, thisArg);
