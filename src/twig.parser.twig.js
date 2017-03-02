@@ -1,7 +1,3 @@
-module.exports = function(Twig) {
-    'use strict';
-
-    Twig.Templates.registerParser('twig', function(params) {
-        return new Twig.Template(params);
-    });
+module.exports = function (Twig) {
+  Twig.Templates.registerParser('twig', params => new Twig.Template(params));
 };

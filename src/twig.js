@@ -6,8 +6,8 @@
  * @link      https://github.com/twigjs/twig.js
  */
 
-var Twig = {
-    VERSION: '0.10.2'
+const Twig = {
+  VERSION: '0.10.2',
 };
 
 require('./twig.core')(Twig);
