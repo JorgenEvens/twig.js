@@ -15,6 +15,12 @@ module.exports = {
         library: 'Twig',
         libraryTarget: 'umd'
     },
+    module: {
+        preLoaders: [{
+            test: /\.js$/,
+            loader: 'eslint'
+        }]
+    },
     plugins: env === 'browser' ? [
         new webpack.optimize.UglifyJsPlugin({minimize: true})
     ] : []
